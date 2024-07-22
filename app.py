@@ -120,7 +120,7 @@ def init_openai_client():
         endpoint = (
             app_settings.azure_openai.endpoint
             if app_settings.azure_openai.endpoint
-            else f"https://{app_settings.azure_openai.resource}.openai.azure.com/"
+            else f"https://{app_settings.azure_openai.resource}.openai.azure.us/"
         )
 
         # Authentication
@@ -129,7 +129,7 @@ def init_openai_client():
         if not aoai_api_key:
             logging.debug("No AZURE_OPENAI_KEY found, using Azure Entra ID auth")
             ad_token_provider = get_bearer_token_provider(
-                DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+                DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT), "https://cognitiveservices.azure.us/.default"
             )
 
         # Deployment
@@ -160,11 +160,11 @@ def init_cosmosdb_client():
     if app_settings.chat_history:
         try:
             cosmos_endpoint = (
-                f"https://{app_settings.chat_history.account}.documents.azure.com:443/"
+                f"https://{app_settings.chat_history.account}.documents.azure.us:443/"
             )
 
             if not app_settings.chat_history.account_key:
-                credential = DefaultAzureCredential()
+                credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
             else:
                 credential = app_settings.chat_history.account_key
 
